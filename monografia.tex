@@ -1,0 +1,60 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Classe do documento
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Opções:
+%  - Graduação: bacharelado|engenharia|licenciatura
+%  - Pós-graduação: [qualificacao], mestrado|doutorado, ppca|ppginf
+
+% \documentclass[engenharia]{UnB-CIC}%
+\documentclass[qualificacao,doutorado,tese,ppginf]{UnB-CIC}%
+
+\usepackage{pdfpages}% incluir PDFs, usado no apêndice
+\usepackage{amsmath}%
+\usepackage{MnSymbol}%
+\usepackage{wasysym}%
+\usepackage{color, colortbl}
+\usepackage{glossaries}  
+\usepackage{tikz}
+\usepackage{stmaryrd}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Informações do Trabalho
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\orientador{\prof \dr Vander Alves}{CIC/UnB}%
+\coorientador{\prof \dr Edson Pignaton de Freitas}{UFRGS}%
+%\coorientador{\prof \dr José Ralha}{CIC/UnB}
+%\coordenador[a]{\prof[a] \dr[a] Ada Lovelace}{Bibliothèque universelle de Genève}%
+%\diamesano{24}{dezembro}{2014}%
+
+\membrobanca{\dr Ingrid}{Federal University of Rio Grande do Sul}%
+\membrobanca{\prof \dr Genaína}{University of Brasilia}%
+
+\autor{Junier Caminha}{Amorim}%
+
+\titulo{Multiple Dynamic Software Product Line as an Approach to Provide Command And Control Agility}%
+
+\palavraschave{Software Product Line, Command and Control, agility, dynamic}%
+\keywords{Software Product Line, Command and Control, agility, dynamic}%
+
+%\newcommand{\unbcic}{\texttt{UnB-CIC}}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Texto
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+    \capitulo{introduction}{Introduction}%
+    \capitulo{background}{Background}%
+    %\capitulo{context}{Context}%
+    \capitulo{development}{Development}%
+    %\capitulo{2_UnB-CIC}{A Classe \unbcic}%
+    %\capitulo{3_TCC}{Trabalho de Conclusão de Curso}%
+    \capitulo{future_work}{Future Work}%
+    %\capitulo{4_Apresentacao}{Apresentações}%
+
+    %\apendice{Apendice_Fichamento}{Fichamento de Artigo Científico}%
+    %\anexo{Anexo1}{Documentação Original \unbcic\ (parcial)}%
+    \input{tex/glossary}
+    \printglossary[title={Glossary}]
+\end{document}%

@@ -1,0 +1,155 @@
+The members of the C2 System interacts with each other, exchanging information and awareness, and the variables evolved in these operations with all conditional rules need to be formalized. The representation chosen, called Program Graph (PG), is applied over a set of typed variables and it is represented by the following tuple:
+
+\begin{center}
+    $(Loc,Act,Effect,\lhookrightarrow,Loc_0,g_0)$
+\end{center}
+
+where,
+
+\begin{itemize}
+	\item $Loc$ is a set of location  
+	\item $Act$ is a set of actions
+	\item Effect is a function defined by $Act \times Eval(Var) \to Eval(Var)$
+	\item $\lhookrightarrow$ is the conditional transition relation defined by $Loc \times Cond(Var) \times Act \times Loc$
+	\item $Loc_0 \subseteq Loc$ is the set of initial locations
+	\item $g_0 \in Cond(Var)$ is the initial condition
+\end{itemize}
+
+
+This representation applies conditional rules, actions and map effects over these variables, conducting the system or entity to different states. \cite{baier}. Our basic element, i.e., the DSPL, had its states modelled with this technique.
+
+As the C2 Domain deals with dynamic context and it is under the effects of changes in the circumstances, the element representation needs to operate with variables that represents this circumstance and its dynamism. Based on the domain studies, these changes can be classified in three categories: self, environment and mission.
+
+The pair formed by the element status ($E$) and the list of tasks allocated ($T$) represent all those changes categories. According to the mission change, the list of tasks allocated can change, adding or removing tasks from it. The sensors on board are able to obtain new conditions from the environment and its possible changes. Besides that, the element $E$ (DSPL) is represented by its feature model ($FM$) that groups all possible valid configurations that it can get during the execution. It represents the changes in the self.
+
+Basically, the element $E$ assumes a valid configuration $c \in \llbracket FM \rrbracket$ and it has a set of tasks ($T$) allocated to be performed. The system is represented by three roles: C2 Approach Selector (C2A), Task Allocator (TA) and Executor (EX). Its execution is performed in a parallel way with data exchange through synchronous and asynchronous channels. The equation \eqref{pg01} shows the PG execution.
+
+\begin{equation}
+\label{pg01}
+    PG = [C2A | TA | EX]
+\end{equation}
+
+The scenario operated by this work requires a variable sharing mechanism to guarantee an information exchange between the processes that are parts of C2 Agility.  We use a Channel System (CS) strategy to represent the system with its three roles working in a parallel way and process a communication among each other using a buffer structure, implemented as a first-in-first-out queue called channel.
+
+Figure \ref{c2a} shows the PG that represents the C2 Approach (C2A) selection role followed by its elements. The element \textit{E} is one member with its status and configuration.
+
+\begin{figure}[h]
+\centering
+\input{tiks/c2a_selector.tex}
+\label{c2a}
+\caption{C2 Approach selector PG}
+\end{figure}
+
+\begin{enumerate}
+    \item $g_0=\{\omega\in\Omega,T\subseteq M\} $
+    
+    \item $Loc=\{Operating, Maneuvering\} $
+    
+    \item $Loc_0=\{Maneuvering\} $
+    
+    \item $Var=\{find\_maneuver(\omega,\{E\},T), f\_remove(T), \omega, T, E\} $
+    
+    \item $Cap(C_2)=0 $
+    
+    \item $\Omega=\{Edge, De-Conflicted, Coord, Conflicted, Collab \}$
+    
+\end{enumerate}
+
+The effects caused by the actions are defined by
+
+    \qquad $Effect(maneuver, \eta)= \eta[\omega:= find\_maneuver(\omega, \{E\}, T)]$
+    
+    \qquad $Effect(update, \eta): \eta[T:=f\_remove(T)]$
+    
+
+
+The $f\_remove$ function is responsible to generate a $T' \subseteq T$ such that 
+
+\begin{center}
+$ \exists \omega \in \Omega / \omega \models T' $
+\end{center}
+
+We can list the following property of the PG presented in \ref{pg01}:
+
+\begin{center}
+$ \square (\diamond Operating) $
+\end{center}
+
+Task Allocator role is represented by the PG in Figure \ref{ta} where
+
+\begin{enumerate}
+
+    \item $Loc=\{C2A Selecting, Idle, Updating, Allocating, Binding, Notifying \}$
+    
+    \item $Loc_0=\{Idle\}$
+    
+    \item $Var=\{alloc, f\_alloc, T, E, t\} $
+    
+    \item $Cap(C_2)=0 $
+    
+    \item $Cap(C_1)>0 $
+    
+    \item $Cap(m_k)>0 $
+    
+    \item $alloc=\{\langle k,T \rangle\}  $
+\end{enumerate}
+
+$k$ variable represents the index of the element $E$ in the set of all agents ($\{E\}$) and it is in the interval $[1..|\{E\}|]$ . T is a set of tasks $t$. The effects of the actions are defined by:
+
+\qquad $Effect(allocate, \eta)= \eta[alloc:= f\_alloc(T, \{E\})]$
+    
+\qquad $Effect(bind, \eta): \eta[\langle k,T \rangle:=head(alloc); alloc:=tail(alloc)]$
+
+\begin{figure}[h]
+\centering
+\input{tiks/ta.tex}
+\label{ta}
+\caption{Task Allocator PG}
+\end{figure}
+
+Property: 
+
+\begin{center}
+$ \square (\diamond Idle) $
+\end{center}
+
+The task allocator will be called by the task executor, that is defined by the program graph in Figure \ref{executor}.
+
+\begin{figure}[h]
+\centering
+\input{tiks/executor.tex}
+\label{executor}
+\caption{Task Executor PG}
+\end{figure}
+
+Its elements is listed below:
+
+\begin{enumerate}
+
+    \item $Loc=\{Running, Idle, Allocating \}$
+    
+    \item $Loc_0=\{Idle\}$
+    
+    \item $Var=\{T, E, c\} $
+    
+    \item $Cap(C_1)>0 $
+    
+    \item $Cap(m_k)>0 $
+    
+\end{enumerate}
+
+where $k$ indicates the index of the executor in analysis.
+
+The effects of the actions are defined by
+
+\qquad $Effect(reconfig, \eta)= \eta[c:=c']$
+    
+\qquad $Effect(next, \eta): \eta[T:=tail(T)]$
+
+\qquad $Effect(wait, \eta): \eta$
+
+For the task executor, the following properties can be identified:
+
+\qquad $\square \diamond (Idle)$
+
+\qquad $\diamond Running$
